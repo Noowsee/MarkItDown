@@ -1,23 +1,63 @@
 import React from "react";
-import { Button, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Swipeable } from "react-native-gesture-handler";
 
-export default function TodoItem({ item, onDelete }) {
+export default function TodoItem({ item, onToggleComplete, onDelete }) {
+  const renderRightActions = () => (
+    <TouchableOpacity
+      onPress={() => onDelete(item.id)}
+      style={styles.deleteButton}
+    >
+      <Text style={styles.deleteText}>Slett</Text>
+    </TouchableOpacity>
+  );
+
   return (
-    <View style={styles.item}>
-      <Text style={styles.text}>{item.text}</Text>
-      <Button title="Delete" onPress={() => onDelete(item.id)} />
-    </View>
+    <Swipeable renderRightActions={renderRightActions}>
+      <TouchableOpacity
+        onPress={() => onToggleComplete(item.id)}
+        style={styles.item}
+      >
+        <View style={[styles.checkbox, item.completed && styles.checked]} />
+        <Text style={[styles.text, item.completed && styles.completedText]}>
+          {item.text}
+        </Text>
+      </TouchableOpacity>
+    </Swipeable>
   );
 }
 
 const styles = StyleSheet.create({
   item: {
-    padding: 15,
-    backgroundColor: "#f9f9f9",
-    borderBottomWidth: 1,
-    borderColor: "#eee",
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 10,
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderWidth: 1,
+    borderColor: "#888",
+    marginRight: 10,
+  },
+  checked: {
+    backgroundColor: "#4caf50",
   },
   text: {
-    fontSize: 16,
+    fontSize: 18,
+  },
+  completedText: {
+    textDecorationLine: "line-through",
+    color: "#888",
+  },
+  deleteButton: {
+    backgroundColor: "#f44336",
+    justifyContent: "center",
+    alignItems: "center",
+    width: 80,
+  },
+  deleteText: {
+    color: "#fff",
+    fontWeight: "bold",
   },
 });
